@@ -11,13 +11,17 @@ import UIKit
 class TodoListViewController: UITableViewController {
     
     var itemArray = ["Item 1", "Item 2", "Item 5"]
+    let defaults = UserDefaults.standard
     
     override func viewDidLoad() {
         super.viewDidLoad()
         // Do any additional setup after loading the view.
+        if let items = defaults.array(forKey: "TodoListArray") as? [String] {
+            itemArray = items
+        }
     }
     
-//    MARK:- Tableview Datasource Methods
+    // MARK: - Tableview Datasource Methods
     override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let cell = tableView.dequeueReusableCell(withIdentifier: "TodoItemCell", for: indexPath)
         cell.textLabel?.text = itemArray[indexPath.row]
@@ -28,7 +32,7 @@ class TodoListViewController: UITableViewController {
         return itemArray.count
     }
 
-    // MARK:- TableView Delegate Methods
+    // MARK: - TableView Delegate Methods
     override func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         print(indexPath.row, itemArray[indexPath.row])
         tableView.deselectRow(at: indexPath, animated: true)
@@ -40,16 +44,17 @@ class TodoListViewController: UITableViewController {
             tableView.cellForRow(at: indexPath)?.accessoryType = .checkmark
         }
     }
-    //    MARK:- Add New Items
+    // MARK: - Add New Items
     @IBAction func addNewButton(_ sender: Any) {
         var textField: UITextField?
         
         let alert = UIAlertController(title: "Add Todoey Item", message: "", preferredStyle: .alert)
         
         let action = UIAlertAction(title: "Add Item", style: .default) { (action) in
-    //            what will happen when the user clicks the add item button on the UIAlert
+            // what will happen when the user clicks the add item button on the UIAlert
             print(textField!.text!)
             self.itemArray.append(textField!.text!)
+            self.defaults.set(self.itemArray, forKey: "TodoListArray")
             self.tableView.reloadData()
         }
         
